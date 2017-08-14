@@ -206,7 +206,7 @@ function new_client(id, opt, cb) {
     do {
         portIndex++;
     }
-    while (!ports[portIndex] && portIndex < 1000);
+    while (ports[portIndex] && portIndex < 1000);
 
     const popt = {
         id: id,
