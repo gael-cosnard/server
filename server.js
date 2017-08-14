@@ -33,6 +33,9 @@ const PRODUCTION = process.env.NODE_ENV === 'production';
 // id -> client http server
 const clients = Object.create(null);
 
+// hostname
+var defaultHostname = false;
+
 // proxy statistics
 const stats = {
     tunnels: 0
@@ -47,11 +50,16 @@ function maybe_bounce(req, res, sock, head) {
         return false;
     }
 
-    const subdomain = tldjs.getSubdomain(hostname);
+    if (defaultHostname && hostname == defaultHostname) {
+        return false;
+    }
+
+    var subdomain = tldjs.getSubdomain(hostname);
     if (!subdomain) {
         return false;
     }
 
+    subdomain = subdomain.split(".")[0];
     const client = clients[subdomain];
 
     // no such subdomain
@@ -226,7 +234,7 @@ module.exports = function(opt) {
     opt = opt || {};
 
     const schema = opt.secure ? 'https' : 'http';
-
+    defaultHostname = opt.hostname ? opt.hostname : false;
     const app = express();
 
     app.get('/', function(req, res, next) {
