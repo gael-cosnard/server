@@ -15,6 +15,7 @@ const Proxy = function(opt) {
     self.sockets = [];
     self.waiting = [];
     self.id = opt.id;
+    self.port = opt.port || 0;
 
     // default max is 10
     self.max_tcp_sockets = opt.max_tcp_sockets || 10;
@@ -53,7 +54,7 @@ Proxy.prototype.start = function(cb) {
         log.error(err);
     });
 
-    server.listen(function() {
+    server.listen(self.port, function() {
         const port = server.address().port;
         self.debug('tcp server listening on port: %d', port);
 

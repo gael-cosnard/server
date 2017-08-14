@@ -32,6 +32,8 @@ const PRODUCTION = process.env.NODE_ENV === 'production';
 
 // id -> client http server
 const clients = Object.create(null);
+const ports = Object.create(null);
+var firstPort = 5000;
 
 // hostname
 var defaultHostname = false;
@@ -200,8 +202,15 @@ function new_client(id, opt, cb) {
         id = rand_id();
     }
 
+    var portIndex = 0;
+    do {
+        portIndex++;
+    }
+    while (!ports[portIndex] && portIndex < 1000);
+
     const popt = {
         id: id,
+        port: firstPort + portIndex,
         max_tcp_sockets: opt.max_tcp_sockets
     };
 
@@ -210,10 +219,12 @@ function new_client(id, opt, cb) {
     // add to clients map immediately
     // avoiding races with other clients requesting same id
     clients[id] = client;
+    ports[portIndex] = true;
 
     client.on('end', function() {
         --stats.tunnels;
         delete clients[id];
+        ports[client.port] = false;
     });
 
     client.start((err, info) => {
