@@ -22,7 +22,7 @@ const argv = optimist
         describe: 'use as base host name'
     })
     .options('max-sockets', {
-        default: 5000,
+        default: 5,
         describe: 'maximum number of tcp sockets each client is allowed to establish at one time (the tunnels)'
     })
     .argv;

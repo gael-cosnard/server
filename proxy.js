@@ -53,7 +53,6 @@ Proxy.prototype.start = function(cb) {
 
         log.error(err);
     });
-
     server.listen(self.port, function() {
         const port = server.address().port;
         self.debug('tcp server listening on port: %d', port);
@@ -95,7 +94,7 @@ Proxy.prototype._handle_socket = function(socket) {
     }
 
     self.debug('new connection from: %s:%s', socket.address().address, socket.address().port);
-
+    socket.setKeepAlive(true);
     // a single connection is enough to keep client id slot open
     clearTimeout(self.conn_timeout);
 
